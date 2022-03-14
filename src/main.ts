@@ -36,10 +36,13 @@ client.on('messageCreate', (message) => {
     if (userInvites >= 3 && userInvites < 10) {
         message.member?.roles.add(twentyFourHour)
     } else if (userInvites >= 3 && userInvites < 10) {
+        message.member?.roles.remove(twentyFourHour)
         message.member?.roles.add(sixteenHour)
     } else if (userInvites >= 10 && userInvites < 20) {
+        message.member?.roles.remove(sixteenHour)
         message.member?.roles.add(eightHour)
     } else if (userInvites >= 20 && userInvites < 30) {
+        message.member?.roles.remove(eightHour)
         message.member?.roles.add(fourHour)
     }
 })
