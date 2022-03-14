@@ -1,5 +1,7 @@
 import DiscordJS, {Intents} from 'discord.js'
 
+let user
+let access: number
 let userId: string
 let userInvites: number
 
@@ -19,32 +21,43 @@ client.on('ready', () => {
     console.log('Role Assigner Ready');
 })
 
-client.on('messageCreate', (message) => {
-    if (message.member?.roles.cache.hasAny('938954181799206983', '952428989421584485', '952021257870790678')) {
+client.on('messageCreate', async (message) => {
+    if (message.member?.roles.cache.hasAny(
+        '938954181799206983',
+        '952428989421584485',
+        '952021257870790678' ||
+        message.author.id !=
+        '499595256270946326'
+    )) {
         return;
     }
 
+
     userId = message.content.slice(50);
-    userId = userId.substring(userId.indexOf("!") + 1, userId.lastIndexOf(">"));
+    userId = userId.substring(userId.indexOf("@") + 1, userId.lastIndexOf(">"));
+    user = await message.guild!.members.fetch(userId)
+
+
+
 
     userInvites = parseInt((message.content.slice(-20).match(/\d/g) || []).join(''));
 
-    if (message.author.id != '499595256270946326') {
-        return;
+    if (userInvites >= 3 && userInvites < 10) {
+        user.roles.add(twentyFourHour)
+        access = 24
+    } else if (userInvites >= 3 && userInvites < 10) {
+        user.roles.add(sixteenHour)
+        access = 16
+    } else if (userInvites >= 10 && userInvites < 20) {
+        user.roles.add(eightHour)
+        access = 8
+    } else if (userInvites >= 20 && userInvites < 30) {
+        user.roles.add(fourHour)
+        access = 4
     }
 
-    if (userInvites >= 3 && userInvites < 10) {
-        message.member?.roles.add(twentyFourHour)
-    } else if (userInvites >= 3 && userInvites < 10) {
-        message.member?.roles.remove(twentyFourHour)
-        message.member?.roles.add(sixteenHour)
-    } else if (userInvites >= 10 && userInvites < 20) {
-        message.member?.roles.remove(sixteenHour)
-        message.member?.roles.add(eightHour)
-    } else if (userInvites >= 20 && userInvites < 30) {
-        message.member?.roles.remove(eightHour)
-        message.member?.roles.add(fourHour)
-    }
+    console.log(`${access} hour access given to ${message.member?.user.username}${message.member?.user.discriminator}`)
+
 })
 
-client.login(process.env.TOKEN).then()
+client.login('OTUyNzEwMzgxNTM5ODM1OTgy.Yi5-rw.ufr5_tcKQk6FbZqwiGIdFg442UE').then()
