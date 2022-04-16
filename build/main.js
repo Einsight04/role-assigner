@@ -33,17 +33,18 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const discord_js_1 = __importStar(require("discord.js"));
-let user;
+let member;
 let access;
 let userId;
 let userInvites;
-const fourHour = '952419492577832980';
-const eightHour = '952419298196996116';
-const sixteenHour = '952351244532482098';
+const threeHour = '952419492577832980';
+const sixHour = '952419298196996116';
+const twelveHour = '952351244532482098';
 const twentyFourHour = '952350649335554068';
 const client = new discord_js_1.default.Client({
     intents: [
         discord_js_1.Intents.FLAGS.GUILDS,
+        discord_js_1.Intents.FLAGS.GUILD_MEMBERS,
         discord_js_1.Intents.FLAGS.GUILD_MESSAGES
     ]
 });
@@ -51,29 +52,46 @@ client.on('ready', () => {
     console.log('Role Assigner Ready');
 });
 client.on('messageCreate', (message) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a, _b, _c;
-    user = yield message.guild.members.fetch('485248184415944738');
-    user.roles.add('952350649335554068');
-    if ((_a = message.member) === null || _a === void 0 ? void 0 : _a.roles.cache.hasAny('938954181799206983', '952428989421584485', '952021257870790678' ||
-        message.author.id !=
-            '499595256270946326')) {
+    var _a;
+    if (((_a = message.member) === null || _a === void 0 ? void 0 : _a.user.id) != '499595256270946326') {
         return;
     }
     userId = message.content.slice(50);
     userId = userId.substring(userId.indexOf("@") + 1, userId.lastIndexOf(">"));
+    member = message.guild.members.cache.get(userId);
+    try {
+        if (member.roles.cache.hasAny('938954181799206983', '952428989421584485', '952021257870790678')) {
+            return;
+        }
+    }
+    catch (_b) {
+        console.log('Not a valid message');
+    }
     userInvites = parseInt((message.content.slice(-20).match(/\d/g) || []).join(''));
-    if (userInvites >= 3 && userInvites < 10) {
-        access = 24;
+    try {
+        if (userInvites >= 3 && userInvites < 10) {
+            member.roles.add(twentyFourHour);
+            access = 24;
+        }
+        else if (userInvites >= 10 && userInvites < 20) {
+            member.roles.remove(twentyFourHour);
+            member.roles.add(twelveHour);
+            access = 12;
+        }
+        else if (userInvites >= 20 && userInvites < 30) {
+            member.roles.remove(twelveHour);
+            member.roles.add(sixHour);
+            access = 6;
+        }
+        else if (userInvites >= 30) {
+            member.roles.remove(sixHour);
+            member.roles.add(threeHour);
+            access = 2;
+        }
+        console.log(`${userId}: ${access} hour access granted`);
     }
-    else if (userInvites >= 3 && userInvites < 10) {
-        access = 16;
+    catch (e) {
+        console.log(e);
     }
-    else if (userInvites >= 10 && userInvites < 20) {
-        access = 8;
-    }
-    else if (userInvites >= 20 && userInvites < 30) {
-        access = 4;
-    }
-    console.log(`${access} hour access given to ${(_b = message.member) === null || _b === void 0 ? void 0 : _b.user.username}${(_c = message.member) === null || _c === void 0 ? void 0 : _c.user.discriminator}`);
 }));
-client.login('OTUyNzEwMzgxNTM5ODM1OTgy.Yi5-rw.ufr5_tcKQk6FbZqwiGIdFg442UE').then();
+client.login('OTUyNzEwMzgxNTM5ODM1OTgy.Yi5-rw.2Cs6YpFhW_SzrePEb7_1Ikax7R4').then();
