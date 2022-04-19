@@ -94,4 +94,4 @@ client.on('messageCreate', (message) => __awaiter(void 0, void 0, void 0, functi
         console.log(e);
     }
 }));
-client.login('OTUyNzEwMzgxNTM5ODM1OTgy.Yi5-rw.2Cs6YpFhW_SzrePEb7_1Ikax7R4').then();
+client.login('OTUyNzEwMzgxNTM5ODM1OTgy.Yi5-rw.rOA_pHF3Y4wtx6erCPfksXlf2Tc').then();
