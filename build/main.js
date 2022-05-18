@@ -1,11 +1,11 @@
 import path from 'path';
+import { fileURLToPath } from 'url';
 import dotenv from 'dotenv';
 import DiscordJS, { Intents } from 'discord.js';
+// setup __dirname
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 dotenv.config({ path: path.join(__dirname, '../.env') });
-let member;
-let access;
-let userId;
-let userInvites;
 const ignoreRoles = ['976215655042941049', '976215656225722449', '976215661778972742', '976215663125332078'];
 const threeHour = '952419492577832980';
 const sixHour = '952419298196996116';
@@ -22,6 +22,10 @@ client.on('ready', () => {
     console.log('Role Assigner Ready');
 });
 client.on('messageCreate', async (message) => {
+    let member;
+    let access;
+    let userId;
+    let userInvites;
     if (message.author.bot)
         return;
     userId = message.content.slice(50);

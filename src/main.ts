@@ -7,16 +7,19 @@ import DiscordJS, {Intents} from 'discord.js'
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+// load .env
 dotenv.config({path: path.join(__dirname, '../.env')});
 
-
+// roles to ignore when checking for role changes
 const ignoreRoles: string[] = ['976215655042941049', '976215656225722449', '976215661778972742', '976215663125332078']
 
+// possible roles to assign
 const threeHour: string = '952419492577832980'
 const sixHour: string = '952419298196996116'
 const twelveHour: string = '952351244532482098'
 const twentyFourHour: string = '952350649335554068'
 
+// Intents
 const client = new DiscordJS.Client({
     intents: [
         Intents.FLAGS.GUILDS,
@@ -25,31 +28,36 @@ const client = new DiscordJS.Client({
     ]
 })
 
+// On startup
 client.on('ready', () => {
     console.log('Role Assigner Ready');
 })
 
-
+// role assigner
 client.on('messageCreate', async (message) => {
+    // variables
     let member: DiscordJS.GuildMember
     let access: number
     let userId: string
     let userInvites: number
 
+    // if message is from bot, ignore
     if (message.author.bot) return;
 
+    // gather info from "invite logger" message
     userId = message.content.slice(50);
     userId = userId.substring(userId.indexOf("@") + 1, userId.lastIndexOf(">"));
     member = message.guild!.members.cache.get(userId)!;
+    userInvites = parseInt((message.content.slice(-20).match(/\d/g) || []).join(''));
 
     try {
+        // if user has role in {ignoreRoles}, ignore
         if (ignoreRoles.some(role => member.roles.cache.has(role))) {
             return;
         }
     } catch { return; }
 
-    userInvites = parseInt((message.content.slice(-20).match(/\d/g) || []).join(''));
-
+    // role assigner logic
     try {
         if (userInvites >= 3 && userInvites < 10) {
             await member.roles.add(twentyFourHour);
@@ -73,5 +81,5 @@ client.on('messageCreate', async (message) => {
     }
 })
 
-
+// login
 await client.login(process.env.DISCORD_TOKEN);
