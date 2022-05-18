@@ -1,8 +1,0 @@
-{
-  "devDependencies": {
-    "typescript": "^4.6.2"
-  },
-  "dependencies": {
-    "discord.js": "^13.6.0"
-  }
-}

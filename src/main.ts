@@ -1,9 +1,16 @@
-import DiscordJS, {Intents, TextChannel} from 'discord.js'
+import path from 'path';
+import {fileURLToPath} from 'url';
+import dotenv from 'dotenv';
+import DiscordJS, {Intents} from 'discord.js'
 
-let member: any
-let access: number
-let userId: string
-let userInvites: number
+// setup __dirname
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+dotenv.config({path: path.join(__dirname, '../.env')});
+
+
+const ignoreRoles: string[] = ['976215655042941049', '976215656225722449', '976215661778972742', '976215663125332078']
 
 const threeHour: string = '952419492577832980'
 const sixHour: string = '952419298196996116'
@@ -24,45 +31,47 @@ client.on('ready', () => {
 
 
 client.on('messageCreate', async (message) => {
-    if (message.member?.user.id != '499595256270946326') {
-        return;
-    }
+    let member: DiscordJS.GuildMember
+    let access: number
+    let userId: string
+    let userInvites: number
+
+    if (message.author.bot) return;
 
     userId = message.content.slice(50);
     userId = userId.substring(userId.indexOf("@") + 1, userId.lastIndexOf(">"));
-    member = message.guild!.members.cache.get(userId);
+    member = message.guild!.members.cache.get(userId)!;
 
     try {
-        if (member.roles.cache.hasAny('938954181799206983', '952428989421584485', '952021257870790678')) {
+        if (ignoreRoles.some(role => member.roles.cache.has(role))) {
             return;
         }
-    } catch {
-        console.log('Not a valid message');
-    }
+    } catch { return; }
 
     userInvites = parseInt((message.content.slice(-20).match(/\d/g) || []).join(''));
 
     try {
         if (userInvites >= 3 && userInvites < 10) {
-            member.roles.add(twentyFourHour);
+            await member.roles.add(twentyFourHour);
             access = 24;
         } else if (userInvites >= 10 && userInvites < 20) {
-            member.roles.remove(twentyFourHour);
-            member.roles.add(twelveHour);
+            await member.roles.remove(twentyFourHour);
+            await member.roles.add(twelveHour);
             access = 12;
         } else if (userInvites >= 20 && userInvites < 30) {
-            member.roles.remove(twelveHour);
-            member.roles.add(sixHour);
+            await member.roles.remove(twelveHour);
+            await member.roles.add(sixHour);
             access = 6;
         } else if (userInvites >= 30) {
-            member.roles.remove(sixHour);
-            member.roles.add(threeHour);
+            await member.roles.remove(sixHour);
+            await member.roles.add(threeHour);
             access = 2;
         }
-        console.log(`${userId}: ${access} hour access granted`)
+        console.log(`${userId}: ${access!} hour access granted`)
     } catch (e) {
         console.log(e);
     }
 })
 
-client.login('OTUyNzEwMzgxNTM5ODM1OTgy.Yi5-rw.rOA_pHF3Y4wtx6erCPfksXlf2Tc').then()
+
+await client.login(process.env.DISCORD_TOKEN);
